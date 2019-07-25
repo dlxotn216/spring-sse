@@ -12,15 +12,20 @@ import org.springframework.web.bind.annotation.PathVariable;
 @Controller
 public class AlertViewController {
 
-    @GetMapping(value="/alerts/{userId}", produces = MediaType.TEXT_HTML_VALUE)
-    public String getAlertView(@PathVariable("userId") String userId, ModelMap modelMap){
-        modelMap.addAttribute("userId",userId);
+    @GetMapping(value = "/alerts/{receiver}", produces = MediaType.TEXT_HTML_VALUE)
+    public String getAlertView(@PathVariable("receiver") String receiver, ModelMap modelMap) {
+        modelMap.addAttribute("receiver", receiver);
         return "alerts/index";
     }
 
-    @GetMapping(value="/redis/alerts/{userId}", produces = MediaType.TEXT_HTML_VALUE)
-    public String getRedisAlertView(@PathVariable("userId") String userId, ModelMap modelMap){
-        modelMap.addAttribute("userId",userId);
+    @GetMapping(value = "/redis/alerts/{receiver}", produces = MediaType.TEXT_HTML_VALUE)
+    public String getRedisAlertView(@PathVariable("receiver") String receiver, ModelMap modelMap) {
+        modelMap.addAttribute("receiver", receiver);
         return "alerts/redis_index";
+    }
+
+    @GetMapping(value = "/redis/alerts/publish")
+    public String push(ModelMap modelMap) {
+        return "alerts/redis_publish";
     }
 }

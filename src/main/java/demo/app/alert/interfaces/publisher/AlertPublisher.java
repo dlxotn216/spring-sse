@@ -23,13 +23,13 @@ import java.time.Duration;
 public class AlertPublisher {
     private final AlertEmitterProcessor alertEmitterProcessor;
 
-    @GetMapping(value = "/alerts/{userId}/publish")
-    public void push(@PathVariable("userId") String userId, @RequestParam("message") String message) {
-        this.alertEmitterProcessor.emit(new Alert(userId, message));
+    @GetMapping(value = "/alerts/{receiver}/publish")
+    public void push(@PathVariable("receiver") String receiver, @RequestParam("message") String message) {
+        this.alertEmitterProcessor.emit(new Alert(receiver, message));
     }
 
-    @GetMapping(value = "/alerts/{userId}/subscribe", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public Flux<ServerSentEvent<Alert>> subscribe(@PathVariable("userId") String userId) {
+    @GetMapping(value = "/alerts/{receiver}/subscribe", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public Flux<ServerSentEvent<Alert>> subscribe(@PathVariable("receiver") String receiver) {
         return this.alertEmitterProcessor.getEmitterProcessor()
                                          .map(this::getAlertServerSentEvent)
                                          .log("request processed in current thread " + Thread.currentThread().getName())
@@ -40,7 +40,7 @@ public class AlertPublisher {
 
 
     private ServerSentEvent<Alert> getAlertServerSentEvent(Alert alert) {
-        return ServerSentEvent.<Alert>builder().event("alert-" + alert.getSender()).data(alert)
+        return ServerSentEvent.<Alert>builder().event("alert-" + alert.getReceiver()).data(alert)
                                                .retry(Duration.ofSeconds(10)).build();
     }
 }

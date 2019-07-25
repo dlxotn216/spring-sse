@@ -5,7 +5,6 @@
     <title>Temperatures</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-
 </head>
 <body>
 <input type="hidden" id="receiver" value="${receiver}"/>
@@ -18,7 +17,7 @@
 <script>
     <#noparse>
     const receiver = document.getElementById('receiver').value;
-    let es = new EventSource(`/alerts/${receiver}/subscribe`);
+    let es = new EventSource(`/redis/alerts/${receiver}/subscribe`);
     const alerts = [];
     const $alertCount = document.getElementById('alertCount');
     const $alerts = document.getElementById('alerts');
@@ -30,7 +29,7 @@
     };
 
 
-    es.addEventListener(`alert-${receiver}`, function (event) {
+    es.addEventListener(`redis-alert-${receiver}`, function (event) {
         const data = JSON.parse(event.data);
         alerts.push(data);
         console.log(event);
@@ -54,7 +53,7 @@
 
             console.log(`And trying to reconnect by creating new EventSource ${es}`);
         } else {
-            console.log('Event source error event listener :', e, es);
+            console.log(`Event source error event listener : ${e}, ${es}`);
         }
     }, false);
 
